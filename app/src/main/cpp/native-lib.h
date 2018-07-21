@@ -3,6 +3,13 @@
 
 #include <tuple>
 
-std::tuple<int, int> randPantsu(bool farming);
+enum Rolls {
+    FREE = 0,
+    LOW = 1, // also used for farming
+    MED = 2,
+    HIGH = 3,
+};
+
+std::tuple<int, int> randPantsu(Rolls rollType);
 
 #endif //MYAPPLICATION_NATIVE_LIB_H

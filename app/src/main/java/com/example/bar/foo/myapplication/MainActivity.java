@@ -30,6 +30,12 @@ public class MainActivity extends AppCompatActivity {
             R.id.pantsu40, R.id.pantsu41, R.id.pantsu42, R.id.pantsu43,
             R.id.pantsu50, R.id.pantsu51, R.id.pantsu52, R.id.pantsu53 };
 
+    // should match Rolls enum in C++
+    public static final int ROLL_FREE = 0;
+    public static final int ROLL_LOW = 1;
+    public static final int ROLL_MED = 2;
+    public static final int ROLL_HIGH = 3;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +62,10 @@ public class MainActivity extends AppCompatActivity {
         fabManual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                fetchPantsu(); // Maybe show some pantsu images in the background as you click, with a golden one when it's an ssr
+                boolean success = fetchPantsu(ROLL_FREE); // Maybe show some pantsu images in the background as you click, with a golden one when it's an ssr
+                if (!success) {
+                    showNotEnoughMessage();
+                }
                 updateStatus();
             }
         });
@@ -67,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view){
                 boolean success = buyFarmer();
                 if (!success) {
-                    Toast.makeText(MainActivity.this, R.string.notEnoughPantsu, Toast.LENGTH_SHORT).show();
+                    showNotEnoughMessage();
                 }
                 updateStatus();
             }
@@ -126,11 +135,14 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void showNotEnoughMessage() {
+        Toast.makeText(MainActivity.this, R.string.notEnoughPantsu, Toast.LENGTH_SHORT).show();
+    }
 
     @SuppressLint("SetTextI18n")
     private void updateStatus() {
         TextView tv = findViewById(R.id.sample_text);
-        tv.setText(farmStatus());
+        tv.setText(String.format(getString(R.string.farmerStatus), getFarmers(), getFarmerCost()));
 
         TextView points = findViewById(R.id.pantyPoints);
         points.setText(getString(R.string.points) + Integer.toString(getPoints()));
@@ -151,17 +163,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public native String farmStatus();
-
     public native int[] pantsuStatus();
 
     public native int[] getLevels();
 
-    public native void fetchPantsu();
+    public native boolean fetchPantsu(int rollType);
 
     public native boolean buyFarmer();
 
     public native int getFarmers();
+
+    public native int getFarmerCost();
 
     public native int getPoints();
 

@@ -5,4 +5,5 @@
     <string name="level_all">level all</string>
     <string name="sell_extras">sell extras</string>
     <string name="points">PantyPoints:</string>
+    <string name="farmerStatus">Pantsu farmers: %d\nCost to buy a new one: %d</string>
 </resources>

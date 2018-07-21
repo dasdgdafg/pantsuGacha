@@ -23,20 +23,33 @@ static int farmerCost = 50;
 
 static int pantyPoints = 200;
 
-static const double chances[] = {0.95, 0.85, 0.65, 0.40};
+static const double ROLL_ODDS[4][4] = {{1.00, 0.99, 0.89, 0.65}, // free * - ****   65% 24% 10% 01% 00%
+                                       {1.00, 0.95, 0.85, 0.60}, // low * - ****    60% 25% 10% 05% 00%
+                                       {0.95, 0.75, 0.55, 0.30}, // med * - *****   30% 25% 20% 20% 05%
+                                       {0.80, 0.55, 0.30, 0.00}};// high ** - ***** 00% 30% 25% 25% 20%
+static const int ROLL_PRICES[] = {0,    // free - pantsu sells for  7.35 average
+                                  25,   // low  - pantsu sells for  8.00 average
+                                  1000, // med  - pantsu sells for 12.25 average - 5% chance of *****
+                                  4000};// high - pantsu sells for 16.75 average - 20% chance of *****
 static const double farmChances[] = {1.00, 0.95, 0.85, 0.60};
 
-extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainActivity_fetchPantsu(JNIEnv *env, jobject /* this */) {
-    int stars, type;
-    std::tie(stars, type) = randPantsu(false);
-    pantsu[stars][type]++;
+extern "C" JNIEXPORT jboolean JNICALL Java_com_example_bar_foo_myapplication_MainActivity_fetchPantsu(JNIEnv *env, jobject /* this */, Rolls rollType) {
+    if (pantyPoints < ROLL_PRICES[rollType]) {
+        return 0;
+    } else {
+        pantyPoints -= ROLL_PRICES[rollType];
+        int stars, type;
+        std::tie(stars, type) = randPantsu(rollType);
+        pantsu[stars][type]++;
+        return 1;
+    }
 }
 
-std::tuple<int, int> randPantsu(bool farming) {
+std::tuple<int, int> randPantsu(Rolls rollType) {
     double rare = (double) rand() / RAND_MAX;
     int type = rand() % 4;
     int stars;
-    const double *chance = farming ? farmChances : chances;
+    const double *chance = ROLL_ODDS[rollType];
     if (rare > chance[0]) {
         stars = 5;
     } else  if (rare > chance[1]) {
@@ -49,18 +62,6 @@ std::tuple<int, int> randPantsu(bool farming) {
         stars = 1;
     }
     return {stars, type};
-}
-
-extern "C" JNIEXPORT jstring JNICALL Java_com_example_bar_foo_myapplication_MainActivity_farmStatus(JNIEnv *env, jobject /* this */) {
-    std::ostringstream stringStream;
-
-    stringStream << "pantsu farmers: ";
-    stringStream << farmers;
-    stringStream << "\n";
-    stringStream << "cost to buy a new one: "; // Probably move this near the button at some point
-    stringStream << farmerCost;
-
-    return env->NewStringUTF(stringStream.str().c_str());
 }
 
 extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_MainActivity_pantsuStatus(JNIEnv *env, jobject /* this */)
@@ -131,7 +132,7 @@ Java_com_example_bar_foo_myapplication_MainActivity_buyFarmer(JNIEnv *env, jobje
     else {
         pantyPoints -= farmerCost;
         farmers++;
-        farmerCost =  (int)pow((double)farmerCost,1.2); // Maybe another formula?
+        farmerCost =  (int)pow((double)farmerCost,1.15); // Maybe another formula?
         return 1;
     }
 }
@@ -142,6 +143,10 @@ Java_com_example_bar_foo_myapplication_MainActivity_getFarmers(JNIEnv *env, jobj
     return farmers;
 }
 
+extern "C" JNIEXPORT jint JNICALL Java_com_example_bar_foo_myapplication_MainActivity_getFarmerCost(JNIEnv *env, jobject instance) {
+    return farmerCost;
+}
+
 extern "C" JNIEXPORT jint JNICALL Java_com_example_bar_foo_myapplication_MainActivity_getPoints(JNIEnv *env, jobject instance) {
     return pantyPoints;
 }
@@ -150,6 +155,6 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_bar_foo_myapplication_MainActivity_farmPantsu(JNIEnv *env, jobject instance) {
     int stars, type;
-    std::tie(stars, type) = randPantsu(true);
+    std::tie(stars, type) = randPantsu(LOW);
     pantsu[stars][type] += farmers;
 }
