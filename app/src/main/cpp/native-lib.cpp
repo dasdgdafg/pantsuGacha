@@ -1,3 +1,5 @@
+#include "native-lib.h"
+
 #include <jni.h>
 #include <string>
 #include <sstream>
@@ -14,23 +16,32 @@ static int farmers = 0;
 static int farmerCost = 10;
 static bool notEnough = false;
 
+static const double chances[] = {0.95, 0.85, 0.65, 0.40};
+static const double farmChances[] = {1.00, 0.95, 0.85, 0.60};
 
 extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainActivity_fetchPantsu(JNIEnv *env, jobject /* this */) {
+    int stars, type;
+    std::tie(stars, type) = randPantsu(false);
+    pantsu[stars][type]++;
+}
+
+std::tuple<int, int> randPantsu(bool farming) {
     double rare = (double) rand() / RAND_MAX;
     int type = rand() % 4;
     int stars;
-    if (rare > 0.95) {
+    const double *chance = farming ? farmChances : chances;
+    if (rare > chance[0]) {
         stars = 5;
-    } else  if (rare > 0.85) {
+    } else  if (rare > chance[1]) {
         stars = 4;
-    } else  if (rare > 0.65) {
+    } else  if (rare > chance[2]) {
         stars = 3;
-    } else  if (rare > 0.40) {
+    } else  if (rare > chance[3]) {
         stars = 2;
     } else {
         stars = 1;
     }
-    pantsu[stars][type]++;
+    return {stars, type};
 }
 
 extern "C" JNIEXPORT jstring JNICALL Java_com_example_bar_foo_myapplication_MainActivity_status(JNIEnv *env, jobject /* this */) {
@@ -89,6 +100,7 @@ Java_com_example_bar_foo_myapplication_MainActivity_getFarmers(JNIEnv *env, jobj
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_bar_foo_myapplication_MainActivity_farmPantsu(JNIEnv *env, jobject instance) {
-    int type = rand() % 4;
-    pantsu[1][type] += farmers;
+    int stars, type;
+    std::tie(stars, type) = randPantsu(true);
+    pantsu[stars][type] += farmers;
 }
