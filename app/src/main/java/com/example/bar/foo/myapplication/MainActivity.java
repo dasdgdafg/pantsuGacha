@@ -133,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         tv.setText(farmStatus());
 
         TextView points = findViewById(R.id.pantyPoints);
-        points.setText("PantyPoints: " + Integer.toString(getPoints()));
+        points.setText(getString(R.string.points) + Integer.toString(getPoints()));
 
         int[] pantsuValues = pantsuStatus();
         int[] levels = getLevels();

@@ -19,9 +19,9 @@ static int levels[6][4] = {{0,0,0,0},
                            {0,0,0,0}};
 
 static int farmers = 0;
-static int farmerCost = 10;
+static int farmerCost = 50;
 
-static int pantyPoints = 1000;
+static int pantyPoints = 200;
 
 static const double chances[] = {0.95, 0.85, 0.65, 0.40};
 static const double farmChances[] = {1.00, 0.95, 0.85, 0.60};
@@ -126,21 +126,10 @@ extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainAct
 extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_example_bar_foo_myapplication_MainActivity_buyFarmer(JNIEnv *env, jobject instance) {
-    if(pantsu[1][0] + pantsu[1][1] + pantsu[1][2] + pantsu[1][3] < farmerCost)
+    if(pantyPoints < farmerCost)
         return 0;
     else {
-        int type = rand() % 4;
-        int remainingCost = farmerCost;
-        while (remainingCost > 0) {
-            if (pantsu[1][type] >= remainingCost) {
-                pantsu[1][type] -= remainingCost;
-                remainingCost = 0;
-            } else {
-                remainingCost -= pantsu[1][type];
-                pantsu[1][type] = 0;
-                type = (type + 1) % 4;
-            }
-        }
+        pantyPoints -= farmerCost;
         farmers++;
         farmerCost =  (int)pow((double)farmerCost,1.2); // Maybe another formula?
         return 1;
