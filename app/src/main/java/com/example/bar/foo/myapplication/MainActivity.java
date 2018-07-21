@@ -2,6 +2,7 @@ package com.example.bar.foo.myapplication;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
@@ -40,10 +41,10 @@ public class MainActivity extends AppCompatActivity {
         final TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                farmPantsu();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        farmPantsu();
                         updateStatus();
                     }
                 });
@@ -71,6 +72,25 @@ public class MainActivity extends AppCompatActivity {
                 updateStatus();
             }
         });
+
+        Button levelButton = findViewById(R.id.levelButton);
+        levelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                levelAll();
+                updateStatus();
+            }
+        });
+
+        Button sellButton = findViewById(R.id.sellButton);
+        sellButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sellExtras();
+                updateStatus();
+            }
+        });
+
         String star = "*";
         for (int stars = 1; stars <= 5; stars++) {
             for (int type = 0; type < 4; type++) {
@@ -112,11 +132,17 @@ public class MainActivity extends AppCompatActivity {
         TextView tv = findViewById(R.id.sample_text);
         tv.setText(farmStatus());
 
+        TextView points = findViewById(R.id.pantyPoints);
+        points.setText("PantyPoints: " + Integer.toString(getPoints()));
+
         int[] pantsuValues = pantsuStatus();
+        int[] levels = getLevels();
         for (int i = 0; i < 20; i++) {
             View layout = findViewById(pantsuLayoutIds[i]);
             TextView num = layout.findViewById(R.id.textQuantity);
             num.setText(Integer.toString(pantsuValues[i]));
+            TextView level = layout.findViewById(R.id.textLevel);
+            level.setText("+" + Integer.toString(levels[i]));
         }
     }
 
@@ -124,12 +150,20 @@ public class MainActivity extends AppCompatActivity {
 
     public native int[] pantsuStatus();
 
+    public native int[] getLevels();
+
     public native void fetchPantsu();
 
     public native boolean buyFarmer();
 
     public native int getFarmers();
 
+    public native int getPoints();
+
     public native void farmPantsu();
+
+    public native void levelAll();
+
+    public native void sellExtras();
 
 }

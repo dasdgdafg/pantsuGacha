@@ -2,4 +2,6 @@
     <string name="app_name">My Application</string>
     <string name="action_settings">Settings</string>
     <string name="notEnoughPantsu">You don\'t have enough pantsu for that!</string>
+    <string name="level_all">level all</string>
+    <string name="sell_extras">sell extras</string>
 </resources>

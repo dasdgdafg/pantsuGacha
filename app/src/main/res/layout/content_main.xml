@@ -20,14 +20,14 @@
 
     <TableLayout
         android:id="@+id/tableLayout1"
+        style="@style/tablePadding"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        style="@style/tablePadding">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TableRow
             android:layout_width="wrap_content"
@@ -35,17 +35,21 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu10"/>
+            <include
+                android:id="@+id/pantsu10"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu11"/>
+            <include
+                android:id="@+id/pantsu11"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu12"/>
+            <include
+                android:id="@+id/pantsu12"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu13"/>
+            <include
+                android:id="@+id/pantsu13"
+                layout="@layout/item_with_stats" />
         </TableRow>
 
         <TableRow
@@ -54,17 +58,21 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu20"/>
+            <include
+                android:id="@+id/pantsu20"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu21"/>
+            <include
+                android:id="@+id/pantsu21"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu22"/>
+            <include
+                android:id="@+id/pantsu22"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu23"/>
+            <include
+                android:id="@+id/pantsu23"
+                layout="@layout/item_with_stats" />
         </TableRow>
 
         <TableRow
@@ -73,17 +81,21 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu30"/>
+            <include
+                android:id="@+id/pantsu30"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu31"/>
+            <include
+                android:id="@+id/pantsu31"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu32"/>
+            <include
+                android:id="@+id/pantsu32"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu33"/>
+            <include
+                android:id="@+id/pantsu33"
+                layout="@layout/item_with_stats" />
         </TableRow>
 
         <TableRow
@@ -92,17 +104,21 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu40"/>
+            <include
+                android:id="@+id/pantsu40"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu41"/>
+            <include
+                android:id="@+id/pantsu41"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu42"/>
+            <include
+                android:id="@+id/pantsu42"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu43"/>
+            <include
+                android:id="@+id/pantsu43"
+                layout="@layout/item_with_stats" />
         </TableRow>
 
         <TableRow
@@ -111,18 +127,57 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu50"/>
+            <include
+                android:id="@+id/pantsu50"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu51"/>
+            <include
+                android:id="@+id/pantsu51"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu52"/>
+            <include
+                android:id="@+id/pantsu52"
+                layout="@layout/item_with_stats" />
 
-            <include layout="@layout/item_with_stats"
-                android:id="@+id/pantsu53"/>
+            <include
+                android:id="@+id/pantsu53"
+                layout="@layout/item_with_stats" />
         </TableRow>
     </TableLayout>
+
+    <TextView
+        android:id="@+id/pantyPoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/levelButton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tableLayout1"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintVertical_bias="0.7"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/levelButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/level_all"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/pantyPoints"
+        app:layout_constraintTop_toTopOf="@+id/pantyPoints"
+        app:layout_constraintEnd_toStartOf="@+id/sellButton"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/pantyPoints" />
+
+    <Button
+        android:id="@+id/sellButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sell_extras"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="@+id/levelButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/levelButton" />
 
 </android.support.constraint.ConstraintLayout>
