@@ -64,7 +64,10 @@ public class MainActivity extends AppCompatActivity {
         fabBuyFarmer.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                buyFarmer();
+                boolean success = buyFarmer();
+                if (!success) {
+                    Toast.makeText(MainActivity.this, R.string.notEnoughPantsu, Toast.LENGTH_SHORT).show();
+                }
                 updateStatus();
             }
         });
@@ -123,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
 
     public native void fetchPantsu();
 
-    public native void buyFarmer();
+    public native boolean buyFarmer();
 
     public native int getFarmers();
 

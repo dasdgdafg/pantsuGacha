@@ -11,10 +11,9 @@ static int pantsu[6][4] = {{0,0,0,0}, // don't use this row, it's just to do pan
                            {0,0,0,0}, // ***
                            {0,0,0,0}, // ****
                            {0,0,0,0}};// *****
-static int farmers = 0;
 
+static int farmers = 0;
 static int farmerCost = 10;
-static bool notEnough = false;
 
 static const double chances[] = {0.95, 0.85, 0.65, 0.40};
 static const double farmChances[] = {1.00, 0.95, 0.85, 0.60};
@@ -52,10 +51,7 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_example_bar_foo_myapplication_Main
     stringStream << "\n";
     stringStream << "cost to buy a new one: "; // Probably move this near the button at some point
     stringStream << farmerCost;
-    if(notEnough)
-        stringStream << "\nYou don't have enough pantsu for that!";
 
-    notEnough= false;
     return env->NewStringUTF(stringStream.str().c_str());
 }
 
@@ -78,12 +74,11 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_Ma
 }
 
 extern "C"
-JNIEXPORT void JNICALL
+JNIEXPORT jboolean JNICALL
 Java_com_example_bar_foo_myapplication_MainActivity_buyFarmer(JNIEnv *env, jobject instance) {
     if(pantsu[1][0] + pantsu[1][1] + pantsu[1][2] + pantsu[1][3] < farmerCost)
-        notEnough = true;
+        return 0;
     else {
-        notEnough = false;
         int type = rand() % 4;
         int remainingCost = farmerCost;
         while (remainingCost > 0) {
@@ -98,6 +93,7 @@ Java_com_example_bar_foo_myapplication_MainActivity_buyFarmer(JNIEnv *env, jobje
         }
         farmers++;
         farmerCost =  (int)pow((double)farmerCost,1.2); // Maybe another formula?
+        return 1;
     }
 }
 
