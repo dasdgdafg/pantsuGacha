@@ -21,8 +21,6 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,9 +33,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 farmPantsu();
-                //updateStatus(); how the heck do threads work again
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateStatus();
+                    }
+                });
             }
         };
+        timer.schedule(timerTask,0,10000);
 
         FloatingActionButton fabManual = (FloatingActionButton) findViewById(R.id.fabManual);
         fabManual.setOnClickListener(new View.OnClickListener() {
@@ -53,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view){
                 buyFarmer();
-                if(getFarmers()==1)
-                    timer.schedule(timerTask,0,10000);
                 updateStatus();
             }
         });
