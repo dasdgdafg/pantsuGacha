@@ -142,6 +142,11 @@ public class MainActivity extends AppCompatActivity {
             TextView num = layout.findViewById(R.id.textQuantity);
             num.setText(Integer.toString(pantsuValues[i]));
             TextView level = layout.findViewById(R.id.textLevel);
+            if (levels[i] == 0) {
+                level.setVisibility(View.INVISIBLE);
+            } else {
+                level.setVisibility(View.VISIBLE);
+            }
             level.setText("+" + Integer.toString(levels[i]));
         }
     }
