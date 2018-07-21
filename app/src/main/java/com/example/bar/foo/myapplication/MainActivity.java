@@ -1,6 +1,8 @@
 package com.example.bar.foo.myapplication;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -20,6 +22,12 @@ public class MainActivity extends AppCompatActivity {
     static {
         System.loadLibrary("native-lib");
     }
+
+    static int[] pantsuLayoutIds = { R.id.pantsu10, R.id.pantsu11, R.id.pantsu12, R.id.pantsu13,
+            R.id.pantsu20, R.id.pantsu21, R.id.pantsu22, R.id.pantsu23,
+            R.id.pantsu30, R.id.pantsu31, R.id.pantsu32, R.id.pantsu33,
+            R.id.pantsu40, R.id.pantsu41, R.id.pantsu42, R.id.pantsu43,
+            R.id.pantsu50, R.id.pantsu51, R.id.pantsu52, R.id.pantsu53 };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +68,16 @@ public class MainActivity extends AppCompatActivity {
                 updateStatus();
             }
         });
+        String star = "*";
+        for (int stars = 1; stars <= 5; stars++) {
+            for (int type = 0; type < 4; type++) {
+                int i = (stars - 1) * 4 + type;
+                View layout = findViewById(pantsuLayoutIds[i]);
+                TextView starText = layout.findViewById(R.id.textStars);
+                starText.setText(star);
+            }
+            star = star + "*";
+        }
         updateStatus();
     }
 
@@ -85,17 +103,23 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    @SuppressLint("SetTextI18n")
     private void updateStatus() {
-        TextView tv = (TextView) findViewById(R.id.sample_text);
-        tv.setText(status());
+        TextView tv = findViewById(R.id.sample_text);
+        tv.setText(farmStatus());
+
+        int[] pantsuValues = pantsuStatus();
+        for (int i = 0; i < 20; i++) {
+            View layout = findViewById(pantsuLayoutIds[i]);
+            TextView num = layout.findViewById(R.id.textQuantity);
+            num.setText(Integer.toString(pantsuValues[i]));
+        }
     }
 
+    public native String farmStatus();
 
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    public native String status();
+    public native int[] pantsuStatus();
 
     public native void fetchPantsu();
 

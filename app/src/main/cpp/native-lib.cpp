@@ -44,17 +44,9 @@ std::tuple<int, int> randPantsu(bool farming) {
     return {stars, type};
 }
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_example_bar_foo_myapplication_MainActivity_status(JNIEnv *env, jobject /* this */) {
+extern "C" JNIEXPORT jstring JNICALL Java_com_example_bar_foo_myapplication_MainActivity_farmStatus(JNIEnv *env, jobject /* this */) {
     std::ostringstream stringStream;
-    for (unsigned int stars = 1; stars <= 5; stars++) {
-        stringStream << std::string(stars, '*') << " pantsu: ";
-        for (int type = 0; type < 4; type++) {
-            stringStream << pantsu[stars][type] << ",";
-        }
-        stringStream << "\n";
-    }
 
-    stringStream << "\n";
     stringStream << "pantsu farmers: ";
     stringStream << farmers;
     stringStream << "\n";
@@ -65,6 +57,24 @@ extern "C" JNIEXPORT jstring JNICALL Java_com_example_bar_foo_myapplication_Main
 
     notEnough= false;
     return env->NewStringUTF(stringStream.str().c_str());
+}
+
+extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_MainActivity_pantsuStatus(JNIEnv *env, jobject /* this */)
+{
+    jintArray result;
+    result = env->NewIntArray(20);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    // fill a temp structure to use to populate the java int array
+    jint fill[20];
+    for (int i = 0; i < 20; i++) {
+        fill[i] = pantsu[i/4+1][i%4];
+    }
+    // move from the temp structure to the java structure
+    env->SetIntArrayRegion(result, 0, 20, fill);
+    return result;
 }
 
 extern "C"

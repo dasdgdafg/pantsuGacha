@@ -16,9 +16,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/tableLayout1" />
 
     <TableLayout
+        android:id="@+id/tableLayout1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -34,33 +35,17 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <ImageView
-                android:id="@+id/imageView40"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu10"/>
 
-            <ImageView
-                android:id="@+id/imageView42"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu11"/>
 
-            <ImageView
-                android:id="@+id/imageView43"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu12"/>
 
-            <ImageView
-                android:id="@+id/imageView44"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu13"/>
         </TableRow>
 
         <TableRow
@@ -69,33 +54,17 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <ImageView
-                android:id="@+id/imageView48"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu20"/>
 
-            <ImageView
-                android:id="@+id/imageView47"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu21"/>
 
-            <ImageView
-                android:id="@+id/imageView46"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu22"/>
 
-            <ImageView
-                android:id="@+id/imageView45"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu23"/>
         </TableRow>
 
         <TableRow
@@ -104,33 +73,17 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <ImageView
-                android:id="@+id/imageView52"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu30"/>
 
-            <ImageView
-                android:id="@+id/imageView51"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu31"/>
 
-            <ImageView
-                android:id="@+id/imageView50"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu32"/>
 
-            <ImageView
-                android:id="@+id/imageView49"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu33"/>
         </TableRow>
 
         <TableRow
@@ -139,68 +92,36 @@
             android:layout_weight="1"
             android:gravity="center">
 
-            <ImageView
-                android:id="@+id/imageView56"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu40"/>
 
-            <ImageView
-                android:id="@+id/imageView55"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu41"/>
 
-            <ImageView
-                android:id="@+id/imageView54"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu42"/>
 
-            <ImageView
-                android:id="@+id/imageView53"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu43"/>
         </TableRow>
 
         <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center">
 
-            <ImageView
-                android:id="@+id/imageView60"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu50"/>
 
-            <ImageView
-                android:id="@+id/imageView59"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu51"/>
 
-            <ImageView
-                android:id="@+id/imageView58"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu52"/>
 
-            <ImageView
-                android:id="@+id/imageView57"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="@style/tablePadding"
-                app:srcCompat="@drawable/aaa50" />
+            <include layout="@layout/item_with_stats"
+                android:id="@+id/pantsu53"/>
         </TableRow>
     </TableLayout>
 
