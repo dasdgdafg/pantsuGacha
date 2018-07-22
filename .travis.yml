@@ -3,3 +3,7 @@ android:
   components:
     - build-tools-27.0.3
     - android-26
+install:
+  - yes | sdkmanager 'ndk-bundle'
+  - yes | sdkmanager 'cmake;3.6.4111459'
+  - yes | sdkmanager 'lldb;3.0'
