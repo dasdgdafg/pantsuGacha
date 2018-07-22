@@ -20,7 +20,19 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <fragment
+        android:name="com.example.bar.foo.myapplication.MainFragment"
+        android:id="@+id/contentFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <fragment
+        android:name="com.example.bar.foo.myapplication.RollFragment"
+        android:id="@+id/rollFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fabManual"

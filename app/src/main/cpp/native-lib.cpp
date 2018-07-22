@@ -151,6 +151,10 @@ extern "C" JNIEXPORT jint JNICALL Java_com_example_bar_foo_myapplication_MainAct
     return pantyPoints;
 }
 
+extern "C" JNIEXPORT jint JNICALL Java_com_example_bar_foo_myapplication_MainActivity_getRollPrice(JNIEnv *env, jobject instance, Rolls rollType) {
+    return ROLL_PRICES[rollType];
+}
+
 extern "C"
 JNIEXPORT void JNICALL
 Java_com_example_bar_foo_myapplication_MainActivity_farmPantsu(JNIEnv *env, jobject instance) {

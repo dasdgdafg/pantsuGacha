@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
-    static int[] pantsuLayoutIds = { R.id.pantsu10, R.id.pantsu11, R.id.pantsu12, R.id.pantsu13,
+    static final int[] pantsuLayoutIds = { R.id.pantsu10, R.id.pantsu11, R.id.pantsu12, R.id.pantsu13,
             R.id.pantsu20, R.id.pantsu21, R.id.pantsu22, R.id.pantsu23,
             R.id.pantsu30, R.id.pantsu31, R.id.pantsu32, R.id.pantsu33,
             R.id.pantsu40, R.id.pantsu41, R.id.pantsu42, R.id.pantsu43,
@@ -42,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        findViewById(R.id.contentFragment).setVisibility(View.VISIBLE);
+        findViewById(R.id.rollFragment).setVisibility(View.GONE);
 
         final Timer timer = new Timer();
         final TimerTask timerTask = new TimerTask() {
@@ -62,11 +65,13 @@ public class MainActivity extends AppCompatActivity {
         fabManual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                boolean success = fetchPantsu(ROLL_FREE); // Maybe show some pantsu images in the background as you click, with a golden one when it's an ssr
-                if (!success) {
-                    showNotEnoughMessage();
+                if (findViewById(R.id.contentFragment).getVisibility() == View.GONE) {
+                    findViewById(R.id.contentFragment).setVisibility(View.VISIBLE);
+                    findViewById(R.id.rollFragment).setVisibility(View.GONE);
+                } else {
+                    findViewById(R.id.contentFragment).setVisibility(View.GONE);
+                    findViewById(R.id.rollFragment).setVisibility(View.VISIBLE);
                 }
-                updateStatus();
             }
         });
 
@@ -110,7 +115,45 @@ public class MainActivity extends AppCompatActivity {
             }
             star = star + "*";
         }
+
+        View freeRolls = findViewById(R.id.rollFree);
+        freeRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(ROLL_FREE));
+        TextView freeRollText = freeRolls.findViewById(R.id.rollPrice);
+        freeRollText.setText(String.format(getString(R.string.freeRollText), getRollPrice(ROLL_FREE)));
+
+        View lowRolls = findViewById(R.id.rollLow);
+        lowRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(ROLL_LOW));
+        TextView lowRollText = lowRolls.findViewById(R.id.rollPrice);
+        lowRollText.setText(String.format(getString(R.string.lowRollText), getRollPrice(ROLL_LOW)));
+
+        View medRolls = findViewById(R.id.rollMed);
+        medRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(ROLL_MED));
+        TextView medRollText = medRolls.findViewById(R.id.rollPrice);
+        medRollText.setText(String.format(getString(R.string.medRollText), getRollPrice(ROLL_MED)));
+
+        View highRolls = findViewById(R.id.rollHigh);
+        highRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(ROLL_HIGH));
+        TextView highRollText = highRolls.findViewById(R.id.rollPrice);
+        highRollText.setText(String.format(getString(R.string.highRollText), getRollPrice(ROLL_HIGH)));
+
         updateStatus();
+    }
+
+    private class RollClickListener implements View.OnClickListener {
+        private final int level;
+
+        public RollClickListener(int level) {
+            this.level = level;
+        }
+
+        @Override
+        public void onClick(View view) {
+            boolean success = fetchPantsu(level);
+            if (!success) {
+                showNotEnoughMessage();
+            }
+            updateStatus();
+        }
     }
 
     @Override
@@ -144,8 +187,11 @@ public class MainActivity extends AppCompatActivity {
         TextView tv = findViewById(R.id.sample_text);
         tv.setText(String.format(getString(R.string.farmerStatus), getFarmers(), getFarmerCost()));
 
+        String pointString = getString(R.string.points) + Integer.toString(getPoints());
         TextView points = findViewById(R.id.pantyPoints);
-        points.setText(getString(R.string.points) + Integer.toString(getPoints()));
+        points.setText(pointString);
+        TextView points2 = findViewById(R.id.roll_pantyPoints);
+        points2.setText(pointString);
 
         int[] pantsuValues = pantsuStatus();
         int[] levels = getLevels();
@@ -176,6 +222,8 @@ public class MainActivity extends AppCompatActivity {
     public native int getFarmerCost();
 
     public native int getPoints();
+
+    public native int getRollPrice(int rollType);
 
     public native void farmPantsu();
 

@@ -4,6 +4,11 @@
     <string name="notEnoughPantsu">You don\'t have enough pantsu for that!</string>
     <string name="level_all">level all</string>
     <string name="sell_extras">sell extras</string>
-    <string name="points">PantyPoints:</string>
+    <string name="points">PantyPoints: </string>
     <string name="farmerStatus">Pantsu farmers: %d\nCost to buy a new one: %d</string>
+    <string name="freeRollText">Free roll\nCost: %d</string>
+    <string name="lowRollText">Low roll\nCost: %d</string>
+    <string name="medRollText">Med roll\nCost: %d</string>
+    <string name="highRollText">High roll\nCost: %d</string>
+    <string name="roll">Roll!</string>
 </resources>
