@@ -1,8 +1,14 @@
 package com.example.bar.foo.myapplication;
 
 import android.annotation.SuppressLint;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
@@ -112,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
                 View layout = findViewById(pantsuLayoutIds[i]);
                 TextView starText = layout.findViewById(R.id.textStars);
                 starText.setText(star);
+                ImageView iv = layout.findViewById(R.id.imageIcon);
+                iv.setImageResource(imageForPantsu(stars, type));
             }
             star = star + "*";
         }
@@ -136,6 +144,9 @@ public class MainActivity extends AppCompatActivity {
         TextView highRollText = highRolls.findViewById(R.id.rollPrice);
         highRollText.setText(String.format(getString(R.string.highRollText), getRollPrice(ROLL_HIGH)));
 
+        View iv = findViewById(R.id.receivedPantsuBackground);
+        iv.setAlpha(0);
+
         updateStatus();
     }
 
@@ -148,12 +159,40 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
-            boolean success = fetchPantsu(level);
-            if (!success) {
+            int[] result = fetchPantsu(level);
+            if (result[0] == 0) {
                 showNotEnoughMessage();
+            } else {
+                final ImageView iv = findViewById(R.id.receivedPantsu);
+                final View bg = findViewById(R.id.receivedPantsuBackground);
+                iv.setImageResource(imageForPantsu(result[1], result[2]));
+                bg.setAlpha(1);
+                bg.setBackgroundColor(Color.argb(10 * result[1] * result[1] - 10,255,215,0));
+
+                Animation fadeOut = new AlphaAnimation(1, 0);
+                fadeOut.setInterpolator(new AccelerateInterpolator());
+                fadeOut.setDuration(1000);
+                fadeOut.setStartOffset(200);
+
+                fadeOut.setAnimationListener(new Animation.AnimationListener()
+                {
+                    public void onAnimationEnd(Animation animation)
+                    {
+                        bg.setAlpha(0);
+                        bg.setBackgroundColor(Color.argb(0,0,0,0));
+                    }
+                    public void onAnimationRepeat(Animation animation) {}
+                    public void onAnimationStart(Animation animation) {}
+                });
+
+                bg.startAnimation(fadeOut);
             }
             updateStatus();
         }
+    }
+
+    private int imageForPantsu(int stars, int type) {
+        return R.drawable.aaa50;
     }
 
     @Override
@@ -213,7 +252,8 @@ public class MainActivity extends AppCompatActivity {
 
     public native int[] getLevels();
 
-    public native boolean fetchPantsu(int rollType);
+    // return value is [success, stars, type]
+    public native int[] fetchPantsu(int rollType);
 
     public native boolean buyFarmer();
 

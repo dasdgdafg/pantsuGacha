@@ -33,16 +33,19 @@ static const int ROLL_PRICES[] = {0,    // free - pantsu sells for  7.35 average
                                   4000};// high - pantsu sells for 16.75 average - 20% chance of *****
 static const double farmChances[] = {1.00, 0.95, 0.85, 0.60};
 
-extern "C" JNIEXPORT jboolean JNICALL Java_com_example_bar_foo_myapplication_MainActivity_fetchPantsu(JNIEnv *env, jobject /* this */, Rolls rollType) {
+extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_MainActivity_fetchPantsu(JNIEnv *env, jobject /* this */, Rolls rollType) {
+    jintArray result;
+    result = env->NewIntArray(3);
     if (pantyPoints < ROLL_PRICES[rollType]) {
-        return 0;
+        env->SetIntArrayRegion(result, 0, 3, (jint[]){0, 0, 0});
     } else {
         pantyPoints -= ROLL_PRICES[rollType];
         int stars, type;
         std::tie(stars, type) = randPantsu(rollType);
         pantsu[stars][type]++;
-        return 1;
+        env->SetIntArrayRegion(result, 0, 3, (jint[]){1, stars, type});
     }
+    return result;
 }
 
 std::tuple<int, int> randPantsu(Rolls rollType) {
