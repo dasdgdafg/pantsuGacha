@@ -19,7 +19,8 @@ static int levels[6][4] = {{0,0,0,0},
                            {0,0,0,0}};
 
 static int farmers = 0;
-static int farmerCost = 50;
+static const int BASE_FARMER_COST = 50;
+static const double FARMER_COST_INCREASE = 1.15;
 
 static int pantyPoints = 200;
 
@@ -130,14 +131,18 @@ extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainAct
 extern "C"
 JNIEXPORT jboolean JNICALL
 Java_com_example_bar_foo_myapplication_MainActivity_buyFarmer(JNIEnv *env, jobject instance) {
-    if(pantyPoints < farmerCost)
+    if(pantyPoints < farmerCost())
         return 0;
     else {
-        pantyPoints -= farmerCost;
+        pantyPoints -= farmerCost();
         farmers++;
-        farmerCost =  (int)pow((double)farmerCost,1.15); // Maybe another formula?
         return 1;
     }
+}
+
+int farmerCost() {
+    // cost = 50^(1.15^farmers)
+    return (int)pow(50, pow(1.15, farmers));
 }
 
 extern "C"
@@ -147,7 +152,7 @@ Java_com_example_bar_foo_myapplication_MainActivity_getFarmers(JNIEnv *env, jobj
 }
 
 extern "C" JNIEXPORT jint JNICALL Java_com_example_bar_foo_myapplication_MainActivity_getFarmerCost(JNIEnv *env, jobject instance) {
-    return farmerCost;
+    return farmerCost();
 }
 
 extern "C" JNIEXPORT jint JNICALL Java_com_example_bar_foo_myapplication_MainActivity_getPoints(JNIEnv *env, jobject instance) {
@@ -164,4 +169,23 @@ Java_com_example_bar_foo_myapplication_MainActivity_farmPantsu(JNIEnv *env, jobj
     int stars, type;
     std::tie(stars, type) = randPantsu(LOW);
     pantsu[stars][type] += farmers;
+}
+
+extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainActivity_setLoadedData(JNIEnv *env, jobject instance,
+                                                                                                    jintArray newPantsu_,
+                                                                                                    jintArray newLevels_,
+                                                                                                    jint newPoints,
+                                                                                                    jint newFarmers) {
+    jint *newPantsu = env->GetIntArrayElements(newPantsu_, NULL);
+    jint *newLevels = env->GetIntArrayElements(newLevels_, NULL);
+
+    for (int i = 0; i < 10; i++) {
+        pantsu[i/4+1][i%4] = newPantsu[i];
+        levels[i/4+1][i%4] = newLevels[i];
+    }
+    pantyPoints = newPoints;
+    farmers = newFarmers;
+
+    env->ReleaseIntArrayElements(newPantsu_, newPantsu, 0);
+    env->ReleaseIntArrayElements(newLevels_, newLevels, 0);
 }

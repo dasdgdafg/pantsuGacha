@@ -1,6 +1,7 @@
 package com.example.bar.foo.myapplication;
 
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -20,6 +21,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
+import org.json.JSONArray;
+
+import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -46,6 +52,18 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // load saved data
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        Gson gson = new Gson();
+
+        // get saved values, defaulting to the current values if there is no saved data
+        int[] pantsu = gson.fromJson(prefs.getString("pantsuInfo", gson.toJson(pantsuStatus())), int[].class);
+        int[] levels = gson.fromJson(prefs.getString("levelInfo", gson.toJson(getLevels())), int[].class);
+        int points = gson.fromJson(prefs.getString("points", gson.toJson(getPoints())), int.class);
+        int farmers = gson.fromJson(prefs.getString("farmers", gson.toJson(getFarmers())), int.class);
+        setLoadedData(pantsu, levels, points, farmers);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -148,6 +166,19 @@ public class MainActivity extends AppCompatActivity {
         iv.setAlpha(0);
 
         updateStatus();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        // save data
+        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
+        Gson gson = new Gson();
+        prefs.edit().putString("pantsuInfo", gson.toJson(pantsuStatus()))
+                .putString("levelInfo", gson.toJson(getLevels()))
+                .putString("points", gson.toJson(getPoints()))
+                .putString("farmers", gson.toJson(getFarmers()))
+                .apply();
     }
 
     private class RollClickListener implements View.OnClickListener {
@@ -271,4 +302,5 @@ public class MainActivity extends AppCompatActivity {
 
     public native void sellExtras();
 
+    public native void setLoadedData(int[] pantsu, int[] levels, int points, int farmers);
 }

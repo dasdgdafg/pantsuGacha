@@ -12,4 +12,6 @@ enum Rolls {
 
 std::tuple<int, int> randPantsu(Rolls rollType);
 
+int farmerCost();
+
 #endif //MYAPPLICATION_NATIVE_LIB_H
