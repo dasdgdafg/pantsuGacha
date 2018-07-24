@@ -18,7 +18,7 @@ android {
     signingConfigs {
         release {
             // only available when building on ci
-            storeFile file("pantsu.jks")
+            storeFile file("../pantsu.jks")
             storePassword System.env.KEYSTORE_PASS_2
             keyAlias "key0"
             keyPassword System.env.KEY_PASS
