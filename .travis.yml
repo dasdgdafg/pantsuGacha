@@ -21,9 +21,8 @@ before_script:
 
 before_deploy:
   - git tag v$(./gradlew -q printVersion)
-  - ls -al
-  - ls -al app
-  - ls -al app/release
+  - echo "password" | gpg --passphrase-fd 0 testEncryptedFilesOnTravis.txt.gpg
+  - cat testEncryptedFilesOnTravis.txt
 
 deploy:
   provider: releases
