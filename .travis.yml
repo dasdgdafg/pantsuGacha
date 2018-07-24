@@ -21,7 +21,7 @@ before_script:
 
 before_deploy:
   - echo $TRAVIS_BUILD_NUMBER
-  - gradle -q printVersion
+  - ./gradlew -q printVersion
   - git tag testingTags
 
 deploy:
