@@ -20,9 +20,10 @@ before_script:
   - adb shell input keyevent 82 &
 
 before_deploy:
-  - echo $TRAVIS_BUILD_NUMBER
-  - ./gradlew -q printVersion
-  - git tag testingTags
+  - git tag v$(./gradlew -q printVersion)
+  - ls -al
+  - ls -al app
+  - ls -al app/release
 
 deploy:
   provider: releases
