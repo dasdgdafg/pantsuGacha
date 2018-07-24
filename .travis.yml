@@ -20,6 +20,7 @@ before_script:
   - adb shell input keyevent 82 &
 
 before_deploy:
+  - ./gradlew assembleRelease
   - git tag v$(./gradlew -q printVersion)
   - echo $KEYSTORE_PASS_1 | gpg --passphrase-fd 0 pantsu.jks.gpg
   - ls -al
