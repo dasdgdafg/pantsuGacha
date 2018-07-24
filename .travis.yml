@@ -28,12 +28,6 @@ before_deploy:
   - echo $KEYSTORE_PASS_1 | gpg --passphrase-fd 0 pantsu.jks.gpg
   - ./gradlew assembleRelease
   - git tag v$(./gradlew -q printVersion)
-  - ls -al
-  - ls -al app
-  - ls -al app/build
-  - ls -al app/build/outputs
-  - ls -al app/build/outputs/apk
-  - ls -al app/build/outputs/apk/release
 
 deploy:
   provider: releases
@@ -42,4 +36,4 @@ deploy:
   skip_cleanup: true
   prerelease: true
   on:
-    branch: testing-ci
+    branch: master
