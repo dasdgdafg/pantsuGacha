@@ -21,6 +21,7 @@ static int levels[6][4] = {{0,0,0,0},
 static int farmers = 0;
 static const int BASE_FARMER_COST = 50;
 static const double FARMER_COST_INCREASE = 1.15;
+static const int MAX_LEVEL = 99;
 
 static int pantyPoints = 200;
 
@@ -107,7 +108,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_Ma
 extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainActivity_levelAll(JNIEnv *env, jobject /* this */) {
     for (int stars = 1; stars <= 5; stars++) {
         for (int type = 0; type < 4; type++) {
-            int available = std::min(std::max(pantsu[stars][type] - 1, 0), 9 - levels[stars][type]);
+            int available = std::min(std::max(pantsu[stars][type] - 1, 0), MAX_LEVEL - levels[stars][type]);
             pantsu[stars][type] -= available;
             levels[stars][type] += available;
         }
@@ -117,7 +118,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainAct
 extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainActivity_sellExtras(JNIEnv *env, jobject /* this */) {
     for (int stars = 1; stars <= 5; stars++) {
         for (int type = 0; type < 4; type++) {
-            int useful = std::min(std::max(pantsu[stars][type] - 1, 0), 9 - levels[stars][type]);
+            int useful = std::min(std::max(pantsu[stars][type] - 1, 0), MAX_LEVEL - levels[stars][type]);
             useful++; // keep one of each
             if (pantsu[stars][type] > useful) {
                 int toSell = pantsu[stars][type] - useful;
