@@ -11,12 +11,20 @@ static int pantsu[6][4] = {{0,0,0,0}, // don't use this row, it's just to do pan
                            {0,0,0,0}, // ***
                            {0,0,0,0}, // ****
                            {0,0,0,0}};// *****
-static int levels[6][4] = {{0,0,0,0},
-                           {0,0,0,0},
-                           {0,0,0,0},
-                           {0,0,0,0},
-                           {0,0,0,0},
-                           {0,0,0,0}};
+// from duplicates
+static int dupLevels[6][4] = {{0,0,0,0},
+                              {0,0,0,0},
+                              {0,0,0,0},
+                              {0,0,0,0},
+                              {0,0,0,0},
+                              {0,0,0,0}};
+// from using pantsu
+static int expLevels[6][4] = {{0,0,0,0},
+                              {0,0,0,0},
+                              {0,0,0,0},
+                              {0,0,0,0},
+                              {0,0,0,0},
+                              {0,0,0,0}};
 
 static int farmers = 0;
 static const int BASE_FARMER_COST = 50;
@@ -50,25 +58,6 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_Ma
     return result;
 }
 
-std::tuple<int, int> randPantsu(Rolls rollType) {
-    double rare = (double) rand() / RAND_MAX;
-    int type = rand() % 4;
-    int stars;
-    const double *chance = ROLL_ODDS[rollType];
-    if (rare > chance[0]) {
-        stars = 5;
-    } else  if (rare > chance[1]) {
-        stars = 4;
-    } else  if (rare > chance[2]) {
-        stars = 3;
-    } else  if (rare > chance[3]) {
-        stars = 2;
-    } else {
-        stars = 1;
-    }
-    return {stars, type};
-}
-
 extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_MainActivity_pantsuStatus(JNIEnv *env, jobject /* this */)
 {
     jintArray result;
@@ -87,7 +76,7 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_Ma
     return result;
 }
 
-extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_MainActivity_getLevels(JNIEnv *env, jobject /* this */)
+extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_MainActivity_getDupLevels(JNIEnv *env, jobject /* this */)
 {
     jintArray result;
     result = env->NewIntArray(20);
@@ -98,7 +87,25 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_Ma
     // fill a temp structure to use to populate the java int array
     jint fill[20];
     for (int i = 0; i < 20; i++) {
-        fill[i] = levels[i/4+1][i%4];
+        fill[i] = dupLevels[i/4+1][i%4];
+    }
+    // move from the temp structure to the java structure
+    env->SetIntArrayRegion(result, 0, 20, fill);
+    return result;
+}
+
+extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_MainActivity_getExpLevels(JNIEnv *env, jobject /* this */)
+{
+    jintArray result;
+    result = env->NewIntArray(20);
+    if (result == NULL) {
+        return NULL;
+    }
+
+    // fill a temp structure to use to populate the java int array
+    jint fill[20];
+    for (int i = 0; i < 20; i++) {
+        fill[i] = expLevels[i/4+1][i%4];
     }
     // move from the temp structure to the java structure
     env->SetIntArrayRegion(result, 0, 20, fill);
@@ -108,9 +115,9 @@ extern "C" JNIEXPORT jintArray JNICALL Java_com_example_bar_foo_myapplication_Ma
 extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainActivity_levelAll(JNIEnv *env, jobject /* this */) {
     for (int stars = 1; stars <= 5; stars++) {
         for (int type = 0; type < 4; type++) {
-            int available = std::min(std::max(pantsu[stars][type] - 1, 0), MAX_LEVEL - levels[stars][type]);
+            int available = std::min(std::max(pantsu[stars][type] - 1, 0), MAX_LEVEL - dupLevels[stars][type]);
             pantsu[stars][type] -= available;
-            levels[stars][type] += available;
+            dupLevels[stars][type] += available;
         }
     }
 }
@@ -118,7 +125,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainAct
 extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainActivity_sellExtras(JNIEnv *env, jobject /* this */) {
     for (int stars = 1; stars <= 5; stars++) {
         for (int type = 0; type < 4; type++) {
-            int useful = std::min(std::max(pantsu[stars][type] - 1, 0), MAX_LEVEL - levels[stars][type]);
+            int useful = std::min(std::max(pantsu[stars][type] - 1, 0), MAX_LEVEL - dupLevels[stars][type]);
             useful++; // keep one of each
             if (pantsu[stars][type] > useful) {
                 int toSell = pantsu[stars][type] - useful;
@@ -139,11 +146,6 @@ Java_com_example_bar_foo_myapplication_MainActivity_buyFarmer(JNIEnv *env, jobje
         farmers++;
         return 1;
     }
-}
-
-int farmerCost() {
-    // cost = 50^(1.15^farmers)
-    return (int)pow(50, pow(1.15, farmers));
 }
 
 extern "C"
@@ -174,19 +176,53 @@ Java_com_example_bar_foo_myapplication_MainActivity_farmPantsu(JNIEnv *env, jobj
 
 extern "C" JNIEXPORT void JNICALL Java_com_example_bar_foo_myapplication_MainActivity_setLoadedData(JNIEnv *env, jobject instance,
                                                                                                     jintArray newPantsu_,
-                                                                                                    jintArray newLevels_,
+                                                                                                    jintArray newDupLevels_,
+                                                                                                    jintArray newExpLevels_,
                                                                                                     jint newPoints,
                                                                                                     jint newFarmers) {
     jint *newPantsu = env->GetIntArrayElements(newPantsu_, NULL);
-    jint *newLevels = env->GetIntArrayElements(newLevels_, NULL);
+    jint *newDupLevels = env->GetIntArrayElements(newDupLevels_, NULL);
+    jint *newExpLevels = env->GetIntArrayElements(newExpLevels_, NULL);
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 20; i++) {
         pantsu[i/4+1][i%4] = newPantsu[i];
-        levels[i/4+1][i%4] = newLevels[i];
+        dupLevels[i/4+1][i%4] = newDupLevels[i];
+        expLevels[i/4+1][i%4] = newExpLevels[i];
     }
     pantyPoints = newPoints;
     farmers = newFarmers;
 
     env->ReleaseIntArrayElements(newPantsu_, newPantsu, 0);
-    env->ReleaseIntArrayElements(newLevels_, newLevels, 0);
+    env->ReleaseIntArrayElements(newDupLevels_, newDupLevels, 0);
+    env->ReleaseIntArrayElements(newExpLevels_, newExpLevels, 0);
+}
+
+std::tuple<int, int> randPantsu(Rolls rollType) {
+    double rare = (double) rand() / RAND_MAX;
+    int type = rand() % 4;
+    int stars;
+    const double *chance = ROLL_ODDS[rollType];
+    if (rare > chance[0]) {
+        stars = 5;
+    } else  if (rare > chance[1]) {
+        stars = 4;
+    } else  if (rare > chance[2]) {
+        stars = 3;
+    } else  if (rare > chance[3]) {
+        stars = 2;
+    } else {
+        stars = 1;
+    }
+    return {stars, type};
+}
+
+int farmerCost() {
+    // cost = 50^(1.15^farmers)
+    return (int)pow(50, pow(1.15, farmers));
+}
+
+int pantsuPower(int stars, int type)
+{
+    // stars^3 + expLevel + dupLevel
+    return ((int)pow(stars, 3)) + dupLevels[stars][type] + expLevels[stars][type];
 }

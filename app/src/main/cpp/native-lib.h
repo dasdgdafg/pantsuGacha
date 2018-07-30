@@ -14,4 +14,6 @@ std::tuple<int, int> randPantsu(Rolls rollType);
 
 int farmerCost();
 
+int pantsuPower(int stars, int type);
+
 #endif //MYAPPLICATION_NATIVE_LIB_H

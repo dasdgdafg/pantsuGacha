@@ -4,16 +4,13 @@ import android.annotation.SuppressLint;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -23,13 +20,16 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
-
-import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String DUP_LEVEL_INFO = "levelInfo";
+    public static final String EXP_LEVEL_INFO = "expLevelInfo";
+    public static final String PANTSU_INFO = "pantsuInfo";
+    public static final String POINTS = "points";
+    public static final String FARMERS = "farmers";
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -58,11 +58,12 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
 
         // get saved values, defaulting to the current values if there is no saved data
-        int[] pantsu = gson.fromJson(prefs.getString("pantsuInfo", gson.toJson(pantsuStatus())), int[].class);
-        int[] levels = gson.fromJson(prefs.getString("levelInfo", gson.toJson(getLevels())), int[].class);
-        int points = gson.fromJson(prefs.getString("points", gson.toJson(getPoints())), int.class);
-        int farmers = gson.fromJson(prefs.getString("farmers", gson.toJson(getFarmers())), int.class);
-        setLoadedData(pantsu, levels, points, farmers);
+        int[] pantsu = gson.fromJson(prefs.getString(PANTSU_INFO, gson.toJson(pantsuStatus())), int[].class);
+        int[] dupLevels = gson.fromJson(prefs.getString(DUP_LEVEL_INFO, gson.toJson(getDupLevels())), int[].class);
+        int[] expLevels = gson.fromJson(prefs.getString(EXP_LEVEL_INFO, gson.toJson(getExpLevels())), int[].class);
+        int points = gson.fromJson(prefs.getString(POINTS, gson.toJson(getPoints())), int.class);
+        int farmers = gson.fromJson(prefs.getString(FARMERS, gson.toJson(getFarmers())), int.class);
+        setLoadedData(pantsu, dupLevels, expLevels, points, farmers);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -174,10 +175,11 @@ public class MainActivity extends AppCompatActivity {
         // save data
         SharedPreferences prefs = getPreferences(MODE_PRIVATE);
         Gson gson = new Gson();
-        prefs.edit().putString("pantsuInfo", gson.toJson(pantsuStatus()))
-                .putString("levelInfo", gson.toJson(getLevels()))
-                .putString("points", gson.toJson(getPoints()))
-                .putString("farmers", gson.toJson(getFarmers()))
+        prefs.edit().putString(PANTSU_INFO, gson.toJson(pantsuStatus()))
+                .putString(DUP_LEVEL_INFO, gson.toJson(getDupLevels()))
+                .putString(EXP_LEVEL_INFO, gson.toJson(getExpLevels()))
+                .putString(POINTS, gson.toJson(getPoints()))
+                .putString(FARMERS, gson.toJson(getFarmers()))
                 .apply();
     }
 
@@ -264,24 +266,36 @@ public class MainActivity extends AppCompatActivity {
         points2.setText(pointString);
 
         int[] pantsuValues = pantsuStatus();
-        int[] levels = getLevels();
+        int[] dupLevels = getDupLevels();
+        int[] expLevels = getExpLevels();
         for (int i = 0; i < 20; i++) {
             View layout = findViewById(pantsuLayoutIds[i]);
             TextView num = layout.findViewById(R.id.textQuantity);
             num.setText(Integer.toString(pantsuValues[i]));
-            TextView level = layout.findViewById(R.id.textLevel);
-            if (levels[i] == 0) {
+
+            TextView level = layout.findViewById(R.id.textDupLevel);
+            if (dupLevels[i] == 0) {
                 level.setVisibility(View.INVISIBLE);
             } else {
                 level.setVisibility(View.VISIBLE);
             }
-            level.setText("+" + Integer.toString(levels[i]));
+            level.setText("+" + Integer.toString(dupLevels[i]));
+
+            TextView expLevel = layout.findViewById(R.id.textExpLevel);
+            if (expLevels[i] == 0) {
+                expLevel.setVisibility(View.INVISIBLE);
+            } else {
+                expLevel.setVisibility(View.VISIBLE);
+            }
+            expLevel.setText("+" + Integer.toString(expLevels[i]));
         }
     }
 
     public native int[] pantsuStatus();
 
-    public native int[] getLevels();
+    public native int[] getDupLevels();
+
+    public native int[] getExpLevels();
 
     // return value is [success, stars, type]
     public native int[] fetchPantsu(int rollType);
@@ -302,5 +316,5 @@ public class MainActivity extends AppCompatActivity {
 
     public native void sellExtras();
 
-    public native void setLoadedData(int[] pantsu, int[] levels, int points, int farmers);
+    public native void setLoadedData(int[] pantsu, int[] dupLevels, int[] expLevels, int points, int farmers);
 }
