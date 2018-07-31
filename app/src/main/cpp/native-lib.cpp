@@ -218,7 +218,7 @@ std::tuple<int, int> randPantsu(Rolls rollType) {
 
 int farmerCost() {
     // cost = 50^(1.15^farmers)
-    return (int)pow(50, pow(1.15, farmers));
+    return (int)pow(BASE_FARMER_COST, pow(FARMER_COST_INCREASE, farmers));
 }
 
 int pantsuPower(int stars, int type)

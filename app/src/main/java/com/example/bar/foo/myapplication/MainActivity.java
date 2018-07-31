@@ -1,9 +1,12 @@
 package com.example.bar.foo.myapplication;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
@@ -30,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String PANTSU_INFO = "pantsuInfo";
     public static final String POINTS = "points";
     public static final String FARMERS = "farmers";
+
+    private static final int[] ZEROS = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
     // Used to load the 'native-lib' library on application startup.
     static {
@@ -242,9 +247,29 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_reset) {
+            // https://stackoverflow.com/questions/2115758/how-do-i-display-an-alert-dialog-on-android
+            AlertDialog.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                builder = new AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert);
+            } else {
+                builder = new AlertDialog.Builder(this);
+            }
+            builder.setTitle("Reset all data")
+                    .setMessage("Are you sure you want to reset your data?")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            setLoadedData(ZEROS, ZEROS, ZEROS, 200, 0);
+                            updateStatus();
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .show();
         }
 
         return super.onOptionsItemSelected(item);

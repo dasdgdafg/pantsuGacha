@@ -11,4 +11,5 @@
     <string name="medRollText">Med roll\nCost: %d</string>
     <string name="highRollText">High roll\nCost: %d</string>
     <string name="roll">Roll!</string>
+    <string name="reset_data">Reset data</string>
 </resources>
