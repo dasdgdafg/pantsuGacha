@@ -7,11 +7,13 @@ android:
     - android-26
     - android-24
     - sys-img-armeabi-v7a-android-24
-  
-script:
-    # start the emulator early because it takes a long time to start up
+
+before_script:
+  # start the emulator early because it takes a long time to start up
   - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
   - emulator -avd test -no-skin -no-window &
+  
+script:
   - ./gradlew assembleDebug
   - android-wait-for-emulator
   - adb shell input keyevent 82 &
