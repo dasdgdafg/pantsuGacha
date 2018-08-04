@@ -7,18 +7,11 @@ android:
     - android-26
     - android-24
     - sys-img-armeabi-v7a-android-24
-
-install:
-# starting the emulator isn't really an install, but the emulator is extremely slow, so let it start up while the ndk is downloading
-  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
-  - emulator -avd test -no-skin -no-window &
-  - yes | sdkmanager 'ndk-bundle'
-  - yes | sdkmanager 'cmake;3.6.4111459'
-  - yes | sdkmanager 'lldb;3.0'
-
-before_script:
   
 script:
+    # start the emulator early because it takes a long time to start up
+  - echo no | android create avd --force -n test -t android-24 --abi armeabi-v7a
+  - emulator -avd test -no-skin -no-window &
   - ./gradlew assembleDebug
   - android-wait-for-emulator
   - adb shell input keyevent 82 &

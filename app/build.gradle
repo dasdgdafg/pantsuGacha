@@ -9,11 +9,6 @@ android {
         versionCode Integer.valueOf(System.env.TRAVIS_BUILD_NUMBER ?: 1)
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        externalNativeBuild {
-            cmake {
-                cppFlags ""
-            }
-        }
     }
     signingConfigs {
         release {
@@ -29,11 +24,6 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-    externalNativeBuild {
-        cmake {
-            path "CMakeLists.txt"
         }
     }
 }

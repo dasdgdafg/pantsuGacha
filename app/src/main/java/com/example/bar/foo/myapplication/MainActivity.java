@@ -23,23 +23,11 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
-
-    public static final String DUP_LEVEL_INFO = "levelInfo";
-    public static final String EXP_LEVEL_INFO = "expLevelInfo";
-    public static final String PANTSU_INFO = "pantsuInfo";
-    public static final String POINTS = "points";
-    public static final String FARMERS = "farmers";
-
-    private static final int[] ZEROS = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-
-    // Used to load the 'native-lib' library on application startup.
-    static {
-        System.loadLibrary("native-lib");
-    }
 
     static final int[] pantsuLayoutIds = { R.id.pantsu10, R.id.pantsu11, R.id.pantsu12, R.id.pantsu13,
             R.id.pantsu20, R.id.pantsu21, R.id.pantsu22, R.id.pantsu23,
@@ -47,28 +35,14 @@ public class MainActivity extends AppCompatActivity {
             R.id.pantsu40, R.id.pantsu41, R.id.pantsu42, R.id.pantsu43,
             R.id.pantsu50, R.id.pantsu51, R.id.pantsu52, R.id.pantsu53 };
 
-    // should match Rolls enum in C++
-    public static final int ROLL_FREE = 0;
-    public static final int ROLL_LOW = 1;
-    public static final int ROLL_MED = 2;
-    public static final int ROLL_HIGH = 3;
+    private Model model_ = Model.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // load saved data
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        Gson gson = new Gson();
-
-        // get saved values, defaulting to the current values if there is no saved data
-        int[] pantsu = gson.fromJson(prefs.getString(PANTSU_INFO, gson.toJson(pantsuStatus())), int[].class);
-        int[] dupLevels = gson.fromJson(prefs.getString(DUP_LEVEL_INFO, gson.toJson(getDupLevels())), int[].class);
-        int[] expLevels = gson.fromJson(prefs.getString(EXP_LEVEL_INFO, gson.toJson(getExpLevels())), int[].class);
-        int points = gson.fromJson(prefs.getString(POINTS, gson.toJson(getPoints())), int.class);
-        int farmers = gson.fromJson(prefs.getString(FARMERS, gson.toJson(getFarmers())), int.class);
-        setLoadedData(pantsu, dupLevels, expLevels, points, farmers);
+        model_.load(this);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -83,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        farmPantsu();
+                        model_.farmPantsu();
                         updateStatus();
                     }
                 });
@@ -109,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         fabBuyFarmer.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                boolean success = buyFarmer();
+                boolean success = model_.buyFarmer();
                 if (!success) {
                     showNotEnoughMessage();
                 }
@@ -121,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         levelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                levelAll();
+                model_.levelAll();
                 updateStatus();
             }
         });
@@ -130,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         sellButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sellExtras();
+                model_.sellExtras();
                 updateStatus();
             }
         });
@@ -149,24 +123,24 @@ public class MainActivity extends AppCompatActivity {
         }
 
         View freeRolls = findViewById(R.id.rollFree);
-        freeRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(ROLL_FREE));
+        freeRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(Rolls.FREE));
         TextView freeRollText = freeRolls.findViewById(R.id.rollPrice);
-        freeRollText.setText(String.format(getString(R.string.freeRollText), getRollPrice(ROLL_FREE)));
+        freeRollText.setText(String.format(getString(R.string.freeRollText), Rolls.FREE.getPrice()));
 
         View lowRolls = findViewById(R.id.rollLow);
-        lowRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(ROLL_LOW));
+        lowRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(Rolls.LOW));
         TextView lowRollText = lowRolls.findViewById(R.id.rollPrice);
-        lowRollText.setText(String.format(getString(R.string.lowRollText), getRollPrice(ROLL_LOW)));
+        lowRollText.setText(String.format(getString(R.string.lowRollText), Rolls.LOW.getPrice()));
 
         View medRolls = findViewById(R.id.rollMed);
-        medRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(ROLL_MED));
+        medRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(Rolls.MED));
         TextView medRollText = medRolls.findViewById(R.id.rollPrice);
-        medRollText.setText(String.format(getString(R.string.medRollText), getRollPrice(ROLL_MED)));
+        medRollText.setText(String.format(getString(R.string.medRollText), Rolls.MED.getPrice()));
 
         View highRolls = findViewById(R.id.rollHigh);
-        highRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(ROLL_HIGH));
+        highRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(Rolls.HIGH));
         TextView highRollText = highRolls.findViewById(R.id.rollPrice);
-        highRollText.setText(String.format(getString(R.string.highRollText), getRollPrice(ROLL_HIGH)));
+        highRollText.setText(String.format(getString(R.string.highRollText), Rolls.HIGH.getPrice()));
 
         View iv = findViewById(R.id.receivedPantsuBackground);
         iv.setAlpha(0);
@@ -176,36 +150,34 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onPause() {
+        model_.save(this);
         super.onPause();
-        // save data
-        SharedPreferences prefs = getPreferences(MODE_PRIVATE);
-        Gson gson = new Gson();
-        prefs.edit().putString(PANTSU_INFO, gson.toJson(pantsuStatus()))
-                .putString(DUP_LEVEL_INFO, gson.toJson(getDupLevels()))
-                .putString(EXP_LEVEL_INFO, gson.toJson(getExpLevels()))
-                .putString(POINTS, gson.toJson(getPoints()))
-                .putString(FARMERS, gson.toJson(getFarmers()))
-                .apply();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 
     private class RollClickListener implements View.OnClickListener {
-        private final int level;
+        private final Rolls rollLevel_;
 
-        public RollClickListener(int level) {
-            this.level = level;
+        public RollClickListener(Rolls rollLevel) {
+            rollLevel_ = rollLevel;
         }
 
         @Override
         public void onClick(View view) {
-            int[] result = fetchPantsu(level);
-            if (result[0] == 0) {
+            Pantsu result = model_.fetchPantsu(rollLevel_);
+            if (result == null) {
                 showNotEnoughMessage();
             } else {
                 final ImageView iv = findViewById(R.id.receivedPantsu);
                 final View bg = findViewById(R.id.receivedPantsuBackground);
-                iv.setImageResource(imageForPantsu(result[1], result[2]));
+                iv.setImageResource(imageForPantsu(result.getStars(), result.getType()));
                 bg.setAlpha(1);
-                bg.setBackgroundColor(Color.argb(10 * result[1] * result[1] - 10,255,215,0));
+                bg.setBackgroundColor(Color.argb(10 * result.getStars() * result.getStars() - 10,255,215,0));
 
                 Animation fadeOut = new AlphaAnimation(1, 0);
                 fadeOut.setInterpolator(new AccelerateInterpolator());
@@ -259,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                     .setMessage("Are you sure you want to reset your data?")
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            setLoadedData(ZEROS, ZEROS, ZEROS, 200, 0);
+                            model_.reset();
                             updateStatus();
                         }
                     })
@@ -282,64 +254,35 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void updateStatus() {
         TextView tv = findViewById(R.id.sample_text);
-        tv.setText(String.format(getString(R.string.farmerStatus), getFarmers(), getFarmerCost()));
+        tv.setText(String.format(getString(R.string.farmerStatus), model_.getFarmers(), model_.farmerCost()));
 
-        String pointString = getString(R.string.points) + Integer.toString(getPoints());
+        String pointString = getString(R.string.points) + Integer.toString(model_.getPoints());
         TextView points = findViewById(R.id.pantyPoints);
         points.setText(pointString);
         TextView points2 = findViewById(R.id.roll_pantyPoints);
         points2.setText(pointString);
 
-        int[] pantsuValues = pantsuStatus();
-        int[] dupLevels = getDupLevels();
-        int[] expLevels = getExpLevels();
-        for (int i = 0; i < 20; i++) {
-            View layout = findViewById(pantsuLayoutIds[i]);
+        List<Pantsu> pantsus = model_.getPantsu();
+        for (Pantsu pantsu : pantsus) {
+            View layout = findViewById(pantsuLayoutIds[(pantsu.getStars() - 1) * 4 + pantsu.getType()]);
             TextView num = layout.findViewById(R.id.textQuantity);
-            num.setText(Integer.toString(pantsuValues[i]));
+            num.setText(Integer.toString(pantsu.getCount()));
 
             TextView level = layout.findViewById(R.id.textDupLevel);
-            if (dupLevels[i] == 0) {
+            if (pantsu.getDupLevel() == 0) {
                 level.setVisibility(View.INVISIBLE);
             } else {
                 level.setVisibility(View.VISIBLE);
             }
-            level.setText("+" + Integer.toString(dupLevels[i]));
+            level.setText("+" + Integer.toString(pantsu.getDupLevel()));
 
             TextView expLevel = layout.findViewById(R.id.textExpLevel);
-            if (expLevels[i] == 0) {
+            if (pantsu.getExpLevel() == 0) {
                 expLevel.setVisibility(View.INVISIBLE);
             } else {
                 expLevel.setVisibility(View.VISIBLE);
             }
-            expLevel.setText("+" + Integer.toString(expLevels[i]));
+            expLevel.setText("+" + Integer.toString(pantsu.getExpLevel()));
         }
     }
-
-    public native int[] pantsuStatus();
-
-    public native int[] getDupLevels();
-
-    public native int[] getExpLevels();
-
-    // return value is [success, stars, type]
-    public native int[] fetchPantsu(int rollType);
-
-    public native boolean buyFarmer();
-
-    public native int getFarmers();
-
-    public native int getFarmerCost();
-
-    public native int getPoints();
-
-    public native int getRollPrice(int rollType);
-
-    public native void farmPantsu();
-
-    public native void levelAll();
-
-    public native void sellExtras();
-
-    public native void setLoadedData(int[] pantsu, int[] dupLevels, int[] expLevels, int points, int farmers);
 }
