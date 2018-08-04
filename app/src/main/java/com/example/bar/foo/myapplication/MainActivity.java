@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
             R.id.pantsu50, R.id.pantsu51, R.id.pantsu52, R.id.pantsu53 };
 
     private Model model_ = Model.getInstance();
+    private Timer timer_ = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,21 +50,6 @@ public class MainActivity extends AppCompatActivity {
 
         findViewById(R.id.contentFragment).setVisibility(View.VISIBLE);
         findViewById(R.id.rollFragment).setVisibility(View.GONE);
-
-        final Timer timer = new Timer();
-        final TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        model_.farmPantsu();
-                        updateStatus();
-                    }
-                });
-            }
-        };
-        timer.schedule(timerTask,0,10000);
 
         FloatingActionButton fabManual = (FloatingActionButton) findViewById(R.id.fabManual);
         fabManual.setOnClickListener(new View.OnClickListener() {
@@ -151,13 +137,28 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         model_.save(this);
+        timer_.cancel();
+        timer_ = null;
         super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
+        timer_ = new Timer();
+        final TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        model_.farmPantsu();
+                        updateStatus();
+                    }
+                });
+            }
+        };
+        timer_.schedule(timerTask,10000,10000);
     }
 
     private class RollClickListener implements View.OnClickListener {
