@@ -263,6 +263,12 @@ public class MainActivity extends AppCompatActivity {
         TextView points2 = findViewById(R.id.roll_pantyPoints);
         points2.setText(pointString);
 
+        Button sellButton = findViewById(R.id.sellButton);
+        sellButton.setVisibility(model_.hasExtras() ? View.VISIBLE : View.INVISIBLE);
+
+        Button levelButton = findViewById(R.id.levelButton);
+        levelButton.setVisibility(model_.canLevel() ? View.VISIBLE : View.INVISIBLE);
+
         List<Pantsu> pantsus = model_.getPantsu();
         for (Pantsu pantsu : pantsus) {
             View layout = findViewById(pantsuLayoutIds[(pantsu.getStars() - 1) * 4 + pantsu.getType()]);

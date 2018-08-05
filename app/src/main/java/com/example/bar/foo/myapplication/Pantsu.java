@@ -60,6 +60,17 @@ public class Pantsu {
         return ((int)pow(stars_, 3)) + dupLevel_ + expLevel_;
     }
 
+    public boolean hasExtras() {
+        int spares = max(count_ - 1, 0);
+        int remainingLevels = MAX_LEVEL - dupLevel_;
+        int extra = max(spares - remainingLevels, 0);
+        return extra > 0;
+    }
+
+    public boolean canLevel() {
+        return count_ > 1 && dupLevel_ < MAX_LEVEL;
+    }
+
     public void incrementCount(int i) {
         count_ += i;
     }

@@ -184,6 +184,24 @@ public class Model {
         }
     }
 
+    public boolean hasExtras() {
+        for (Pantsu pantsu : pantsu_) {
+            if (pantsu.hasExtras()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean canLevel() {
+        for (Pantsu pantsu : pantsu_) {
+            if (pantsu.canLevel()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private Pantsu randPantsu(Rolls rollType) {
         double rare = random();
         int type = (int)floor(random()*4);
