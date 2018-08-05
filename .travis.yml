@@ -19,6 +19,7 @@ script:
   # sometimes the emulator is not actually ready yet when android-wait-for-emulator thinks it is
   - while [ "`adb shell getprop sys.boot_completed | tr -d '\r' `" != "1" ] ; do echo "waiting longer"; sleep 1; done
   - while [ "`adb shell getprop dev.bootcomplete | tr -d '\r' `" != "1" ] ; do echo "waiting even longer"; sleep 1; done
+  - while [ ! "`adb shell getprop ro.build.version.sdk`" ] ; do echo "waiting even more longer"; sleep 1; done
   - adb shell input keyevent 82 &
   - ./gradlew connectedCheck
 
