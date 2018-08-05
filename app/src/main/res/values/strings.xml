@@ -12,4 +12,6 @@
     <string name="highRollText">High roll\nCost: %d</string>
     <string name="roll">Roll!</string>
     <string name="reset_data">Reset data</string>
+    <string name="roll_fab">Roll</string>
+    <string name="buy_farmer">Buy farmer</string>
 </resources>

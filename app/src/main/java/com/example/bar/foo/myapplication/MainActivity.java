@@ -1,5 +1,7 @@
 package com.example.bar.foo.myapplication;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -51,22 +53,17 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.contentFragment).setVisibility(View.VISIBLE);
         findViewById(R.id.rollFragment).setVisibility(View.GONE);
 
-        FloatingActionButton fabManual = (FloatingActionButton) findViewById(R.id.fabManual);
-        fabManual.setOnClickListener(new View.OnClickListener() {
+        // fab menu
+        FloatingActionButton fabMenu = findViewById(R.id.fabMenu);
+        fabMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (findViewById(R.id.contentFragment).getVisibility() == View.GONE) {
-                    findViewById(R.id.contentFragment).setVisibility(View.VISIBLE);
-                    findViewById(R.id.rollFragment).setVisibility(View.GONE);
-                } else {
-                    findViewById(R.id.contentFragment).setVisibility(View.GONE);
-                    findViewById(R.id.rollFragment).setVisibility(View.VISIBLE);
-                }
+                fabMenuClicked();
             }
         });
-
-        FloatingActionButton fabBuyFarmer = (FloatingActionButton) findViewById(R.id.fabBuyFarmer);
-        fabBuyFarmer.setOnClickListener(new View.OnClickListener(){
+        View buyFarmer = findViewById(R.id.buyFarmerMenuOption);
+        buyFarmer.setVisibility(View.GONE);
+        buyFarmer.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 boolean success = model_.buyFarmer();
@@ -74,20 +71,29 @@ public class MainActivity extends AppCompatActivity {
                     showNotEnoughMessage();
                 }
                 updateStatus();
+                fabMenuClicked();
+            }
+        });
+        View rolls = findViewById(R.id.rollMenuOption);
+        rolls.setVisibility(View.GONE);
+        rolls.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                findViewById(R.id.contentFragment).setVisibility(View.GONE);
+                findViewById(R.id.rollFragment).setVisibility(View.VISIBLE);
+                fabMenuClicked();
             }
         });
 
-        Button levelButton = findViewById(R.id.levelButton);
-        levelButton.setOnClickListener(new View.OnClickListener() {
+        // top buttons
+        findViewById(R.id.levelButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 model_.levelAll();
                 updateStatus();
             }
         });
-
-        Button sellButton = findViewById(R.id.sellButton);
-        sellButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.sellButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 model_.sellExtras();
@@ -108,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
             star = star + "*";
         }
 
+        // roll fragment
         View freeRolls = findViewById(R.id.rollFree);
         freeRolls.findViewById(R.id.rollButton).setOnClickListener(new RollClickListener(Rolls.FREE));
         TextView freeRollText = freeRolls.findViewById(R.id.rollPrice);
@@ -199,6 +206,51 @@ public class MainActivity extends AppCompatActivity {
                 bg.startAnimation(fadeOut);
             }
             updateStatus();
+        }
+    }
+
+    private void fabMenuClicked() {
+        final View item1 = findViewById(R.id.rollMenuOption);
+        final View item2 = findViewById(R.id.buyFarmerMenuOption);
+        boolean isOpen = item1.getVisibility() == View.VISIBLE;
+        boolean atMainMenu = findViewById(R.id.contentFragment).getVisibility() == View.VISIBLE;
+
+        if (isOpen) {
+            // close the menu
+            item1.animate().translationY(0).alpha(0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    item1.setVisibility(View.GONE);
+                }
+            });
+            item2.animate().translationY(0).alpha(0).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    item2.setVisibility(View.GONE);
+                }
+            });
+        } else if (!atMainMenu) {
+            // go back to the main menu
+            findViewById(R.id.contentFragment).setVisibility(View.VISIBLE);
+            findViewById(R.id.rollFragment).setVisibility(View.GONE);
+        } else {
+            // open the menu
+            item1.animate().translationY(-getResources().getDimension(R.dimen.menu_spacing)).alpha(1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    super.onAnimationStart(animation);
+                    item1.setVisibility(View.VISIBLE);
+                }
+            });
+            item2.animate().translationY(-2*getResources().getDimension(R.dimen.menu_spacing)).alpha(1).setListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                    super.onAnimationStart(animation);
+                    item2.setVisibility(View.VISIBLE);
+                }
+            });
         }
     }
 
