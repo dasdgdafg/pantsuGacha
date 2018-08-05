@@ -25,7 +25,7 @@ script:
   - while [ "`adb shell getprop ro.build.version.sdk | tr -d '\r' `" != "24" ] ; do echo "waiting even more longer"; sleep 1; done
   - adb shell input keyevent 82 &
   - ./gradlew assembleDebugAndroidTest > /dev/null
-  - ./gradlew connectedDebugAndroidTest --stacktrace --debug
+  - ./gradlew connectedDebugAndroidTest --stacktrace
   #- ./gradlew connectedCheck --stacktrace --debug
 
 before_deploy:
