@@ -166,8 +166,10 @@ public class Model {
     }
 
     public void farmPantsu() {
-        Pantsu result = randPantsu(Rolls.LOW);
-        getExistingPantsu(result).incrementCount(farmers_);
+        for (int i = 0; i < farmers_; i++) {
+            Pantsu result = randPantsu(Rolls.LOW);
+            getExistingPantsu(result).incrementCount(1);
+        }
     }
 
     public void levelAll() {
