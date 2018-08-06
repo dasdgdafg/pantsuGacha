@@ -14,7 +14,7 @@ before_script:
   - emulator -avd test -no-skin -no-window &
   
 script:
-  - ./gradlew assembleDebug > /dev/null
+  - ./gradlew assembleDebug
   - android-wait-for-emulator
   # sometimes the emulator is not actually ready yet when android-wait-for-emulator thinks it is
   - adb shell getprop sys.boot_completed
@@ -24,9 +24,7 @@ script:
   - adb shell getprop ro.build.version.sdk
   - while [ "`adb shell getprop ro.build.version.sdk | tr -d '\r' `" != "24" ] ; do echo "waiting even more longer"; sleep 1; done
   - adb shell input keyevent 82 &
-  - ./gradlew assembleDebugAndroidTest > /dev/null
-  - ./gradlew connectedDebugAndroidTest --stacktrace
-  #- ./gradlew connectedCheck --stacktrace --debug
+  - ./gradlew connectedCheck
 
 before_deploy:
   - echo $KEYSTORE_PASS_1 | gpg --passphrase-fd 0 pantsu.jks.gpg
